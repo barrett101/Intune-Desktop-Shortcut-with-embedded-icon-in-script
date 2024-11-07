@@ -120,22 +120,24 @@ If ($Action -eq "Add")
 If ($Action -eq "Remove") 
 {
     #Deletes the shortcut - .lnk or .url
-    If($(Get-ChildItem -Path $Desktop | Where-Object {$_.Name -eq "$ShortcutName$ShortcutType"}))
+    If($(Test-path -path $Desktop\$ShortcutName$ShortcutType -PathType Leaf) -eq $True)
     {
         Write-host "Removing the shortcut."
         Remove-Item $Desktop\$ShortcutName$ShortcutType -Force -Confirm:$False
     }
 
     #Cleans up the folder if necessary - Will only remove the folder if the folder is empty and it isn't the root Desktop folder.
-    If(($(get-childitem "$Desktop").count -eq 0) -and ($($Desktop).EndsWith('\Desktop') -eq $False))
+    If($(Test-path -path $Desktop -PathType Container) -eq $True)
     {
-        Write-host "Desktop Sub Folder is Empty, and is not the root Desktop folder, so will delete it."
-        Remove-Item $Desktop -Force -Confirm:$False
+        If(($(get-childitem "$Desktop").count -eq 0) -and ($($Desktop).EndsWith('\Desktop') -eq $False))
+        {
+            Write-host "Desktop Sub Folder is Empty, and is not the root Desktop folder, so will delete it."
+            Remove-Item $Desktop -Force -Confirm:$False
+        }
     }
 
-
     #Deletes the icon
-    If($(Get-ChildItem -Path $IconPath | Where-Object {$_.Name -eq "$ShortcutName.ico"}))
+    If($(Test-path -path $IconPath -PathType Leaf) -eq $True)
     {
         Write-host "Removing the icon"
         Remove-Item $IconPath -Force -Confirm:$False
