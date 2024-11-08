@@ -16,6 +16,9 @@ If you just need to update the Name of the shortcut, you will need to make a new
 ### Adjusting the Desktop shortcut folder location (ex. Putting shortcut in sub folder on desktop)
 Adjust the "Desktop" variable as needed, but make sure to keep the "$([Environment]::GetFolderPath("Desktop"))" see below in comments for how to add a sub folder if required.  If removing a shortcut and the sub folder is empty after deleting of the shortcut it will delete the sub folder.
 
+### Turning off icon
+You may not want to have an icon file, if not adjust the "EnableIcon" variable to $False.  Use the commented out line.
+
 ## Step by Step
 Step 1:  Create or locate an .ICO file, if needed convert an image to ICO using https://convertio.co/jpg-ico/
 
@@ -30,4 +33,7 @@ Step 5:  Adjust the "ShortcutPath".
 Step 6:  Adjust the "ShortcutType" to either .url or .lnk.
 
 Step 7:  Adjust the "Desktop" path you want the shortcut to be located.  Recommended to keep default, see notes.
-Step 8:  Create a Platform Script to push out the shortcuts.
+
+Step 8:  Adjust the "EnableIcon" to $True or $False depending if you want an icon or not.
+
+Step 9:  Create a Platform Script to push out the shortcuts.
