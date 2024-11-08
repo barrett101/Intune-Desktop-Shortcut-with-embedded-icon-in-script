@@ -20,6 +20,10 @@
     ---------------------------------------------------------------------------------------------------
     Adjust the "Desktop" variable as needed, but make sure to keep the "$([Environment]::GetFolderPath("Desktop"))" see below in comments for how to add a sub folder if required.  If removing a shortcut and the sub folder is empty after deleting of the shortcut it will delete the sub folder.
 
+    Turning off icon
+    ----------------------
+    You may not want to have an icon file, if not adjust the "EnableIcon" variable to $False.  Use the commented out line.
+
     Step by Step
     ---------------------------
     Step 1:  Create or locate an .ICO file, if needed convert an image to ICO using https://convertio.co/jpg-ico/
@@ -29,7 +33,8 @@
     Step 5:  Adjust the "ShortcutPath".
     Step 6:  Adjust the "ShortcutType" to either .url or .lnk.
     Step 7:  Adjust the "Desktop" path you want the shortcut to be located.  Recommended to keep default, see notes.
-    Step 8:  Create a Platform Script to push out the shortcuts.
+    Step 8:  Adjust the "EnableIcon" to $True or $False depending if you want an icon or not.
+    Step 9:  Create a Platform Script to push out the shortcuts.
 #>
 
 #
@@ -43,8 +48,12 @@
 [system.string]$ShortcutPath = "https://www.google.com"
 
 #Choose .url for website shortcuts, Choose .lnk for linking to applications, local resources, or files.  Comment out line as needed.
-[system.string]$ShortcutType = ".url"
-#[system.string]$ShortcutType = ".lnk"
+#[system.string]$ShortcutType = ".url"
+[system.string]$ShortcutType = ".lnk"
+
+#Enable or Disable the Icon
+[System.String]$EnableIcon = $True
+#[System.String]$EnableIcon = $False
 
 #The Desktop path of $([Environment]::GetFolderPath("Desktop")) will return the desktop folder.  If a users is redirecting to OneDrive it will return "C:\Users\username\OneDrive\Desktop" if not it will return "C:\Users\username\Desktop".  Do not change this portion or hardcode it (ex. C:\User\username\desktop), let the environment variables sort it out.
 #Comment line out as needed
@@ -96,7 +105,10 @@ If ($Action -eq "Add")
         $WScriptShell = New-Object -ComObject WScript.Shell
         $shortcut = $WScriptShell.CreateShortcut($shortcutFile)
         $shortcut.TargetPath = $ShortcutPath
-        $shortcut.IconLocation = $IconPath
+        If ($EnableIcon -eq $True)
+        {
+            $shortcut.IconLocation = $IconPath
+        }
         $shortcut.Save()
         Write-host "Created the .lnk shortcut"
     }
@@ -110,9 +122,12 @@ If ($Action -eq "Add")
         $shortcut = $WScriptShell.CreateShortcut($shortcutFile)
         $shortcut.TargetPath = $ShortcutPath
         $shortcut.Save()
-        # Append the icon information.
-        'IconIndex=0', "IconFile=$IconPath" | 
-        Add-Content -LiteralPath $shortcutFile
+        If ($EnableIcon -eq $True)
+        {
+            # Append the icon information.
+            'IconIndex=0', "IconFile=$IconPath" | 
+            Add-Content -LiteralPath $shortcutFile
+        }
         Write-host "Created the .url shortcut"
     }
 }
