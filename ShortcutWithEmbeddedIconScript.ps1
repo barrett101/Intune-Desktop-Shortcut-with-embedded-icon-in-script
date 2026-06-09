@@ -72,8 +72,15 @@
 #
 ##
 #START - DO NOT MODIFY
-#Icon is dropped in the root of the user profile folder.
-[System.String]$IconPath = "$env:USERPROFILE\$ShortcutName.ico"
+#Icon is dropped in the root of the user profile folder depending on the shortcut location chosen.
+If ($Desktop -match "C:\\Users\\Public")
+{
+    [System.String]$IconPath = "C:\Users\Public\$ShortcutName.ico"    
+}
+else
+{
+    [System.String]$IconPath = "$env:USERPROFILE\$ShortcutName.ico"    
+}
 #END - DO NOT MODIFY
 ##
 #
@@ -99,8 +106,11 @@ If ($Action -eq "Add")
     #Creates a .lnk file
     If ($ShortcutType -eq ".lnk")
     {
-        [byte[]]$Bytes = [convert]::FromBase64String($IconBase64)
-        [System.IO.File]::WriteAllBytes($IconPath,$Bytes)
+        If ($EnableIcon -eq $true)
+        {
+            [byte[]]$Bytes = [convert]::FromBase64String($IconBase64)
+            [System.IO.File]::WriteAllBytes($IconPath,$Bytes)
+        }
         $shortcutFile = "$Desktop\$ShortcutName$ShortcutType"
         $WScriptShell = New-Object -ComObject WScript.Shell
         $shortcut = $WScriptShell.CreateShortcut($shortcutFile)
@@ -115,8 +125,11 @@ If ($Action -eq "Add")
     #Creates a .url file
     If ($ShortcutType -eq ".url")
     {
-        [byte[]]$Bytes = [convert]::FromBase64String($IconBase64)
-        [System.IO.File]::WriteAllBytes($IconPath,$Bytes)
+        If ($EnableIcon -eq $true)
+        {
+            [byte[]]$Bytes = [convert]::FromBase64String($IconBase64)
+            [System.IO.File]::WriteAllBytes($IconPath,$Bytes)
+        }
         $shortcutFile = "$Desktop\$ShortcutName$ShortcutType"
         $WScriptShell = New-Object -ComObject WScript.Shell
         $shortcut = $WScriptShell.CreateShortcut($shortcutFile)
